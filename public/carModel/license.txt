@@ -1,0 +1,11 @@
+Model Information:
+* title:	Ferrari 599 GTO
+* source:	https://sketchfab.com/3d-models/ferrari-599-gto-14b4f6d9f84d4e30be52a2158685d3ff
+* author:	Black Snow (https://sketchfab.com/BlackSnow02)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Ferrari 599 GTO" (https://sketchfab.com/3d-models/ferrari-599-gto-14b4f6d9f84d4e30be52a2158685d3ff) by Black Snow (https://sketchfab.com/BlackSnow02) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
