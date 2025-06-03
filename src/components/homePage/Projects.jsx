@@ -182,7 +182,7 @@ const Projects = () => {
       description:
         "A comprehensive EdTech platform offering online courses, student management, and secure payment integration. Built with modern technologies to ensure smooth learning experiences and efficient administration.",
       imageUrl: edunest,
-      tags: ["React", "Node.js", "MongoDB", "ExpressJs", "Redux"],
+      tags: ["React", "Node.js", "MongoDB", "ExpressJs", "Redux", "NodeMailer" , "JWT"],
       link: "https://edunestedtech.vercel.app/",
     },
     {
@@ -191,8 +191,8 @@ const Projects = () => {
       description:
         "A personal portfolio website showcasing my projects, skills, and experiences — with an easy way to connect with me.",
       imageUrl: portfolio,
-      tags: ["React", "Node.js", "MongoDB", "ExpressJs", "Redux"],
-      link: "https://edunestedtech.vercel.app/",
+      tags: ["React", "Node.js", "MongoDB", "ExpressJs", "Redux", "NodeMailer" , "JWT"],
+      link: "https://portfolio-frontend-lac-theta.vercel.app/",
     },
     {
       id: 3,
