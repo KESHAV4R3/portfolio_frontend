@@ -1,4 +1,4 @@
-const backendUrl = import.meta.env.backend_url
+const backendUrl = import.meta.env.VITE_BACKEND_URL
 
 const apiLinks = {
     mailToAdmin: backendUrl + `/sendMailToAdmin`,
