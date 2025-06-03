@@ -1,5 +1,4 @@
-// const backendUrl = 'https://portfolio-backend-int5.onrender.com';
-const backendUrl = 'http://localhost:5000'
+const backendUrl = import.meta.env.backend_url
 
 const apiLinks = {
     mailToAdmin: backendUrl + `/sendMailToAdmin`,
