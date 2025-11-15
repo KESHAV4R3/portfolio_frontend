@@ -12,7 +12,7 @@ const AdminPage = () => {
   const [displayModal, setDisplayModal] = useState(false);
   const [users, setUsers] = useState([]); // Source of truth from API
   const [uiUsers, setUiUsers] = useState([]); // UI-optimized version
-  const [credentials, setCredentials] = useState({
+  const [credentials, setCredentials] = useState({ //
     userName: "",
     password: "",
   });
