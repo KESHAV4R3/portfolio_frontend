@@ -4,9 +4,12 @@ import { updateCurrentSection } from "../redux/slice/applicationSlice";
 import apiLinks from "../services/apliLinks";
 import apiConnector from "../services/apiConnector";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const AdminPage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [mailSendLoading, setMailLoading] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const [displayModal, setDisplayModal] = useState(false);
@@ -37,7 +40,6 @@ const AdminPage = () => {
         if (response.success) {
           setLoggedIn(true);
         } else {
-          console.log("automatic login failed");
           setDisplayModal(true);
         }
       } catch (error) {
@@ -243,9 +245,18 @@ const AdminPage = () => {
       <div className="bg-gray-900 w-full h-screen flex items-center justify-center pt-30">
         {displayModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+
+
             <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md">
               <h2 className="text-2xl font-bold text-white mb-4">
                 Admin Login
+                <button
+                  onClick={() => navigate('/')}
+                  className="flex items-center text-gray-300 hover:text-white transition-colors"
+                >
+                  {/* <FaArrowLeft className="mr-2" /> */}
+                  Back to Home
+                </button>
               </h2>
               {error && (
                 <div className="mb-4 p-2 bg-red-500 text-white rounded">
@@ -321,20 +332,18 @@ const AdminPage = () => {
               {uiUsers.map((user) => (
                 <div
                   key={user._id}
-                  className={`bg-gray-700 rounded-lg p-4 shadow hover:shadow-lg transition-shadow ${
-                    !user.isActive ? "opacity-70" : ""
-                  }`}
+                  className={`bg-gray-700 rounded-lg p-4 shadow hover:shadow-lg transition-shadow ${!user.isActive ? "opacity-70" : ""
+                    }`}
                 >
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="text-lg font-semibold text-gray-100">
                       {user.name}
                     </h3>
                     <span
-                      className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                        user.isActive
+                      className={`px-2 py-1 text-xs font-semibold rounded-full ${user.isActive
                           ? "bg-green-600 text-black"
                           : "bg-red-600 text-black"
-                      }`}
+                        }`}
                     >
                       {user.isActive ? "Active" : "Inactive"}
                     </span>
@@ -366,17 +375,16 @@ const AdminPage = () => {
                     <button
                       onClick={() => toggleUserStatus(user._id, user.isActive)}
                       disabled={togglingUserId === user._id}
-                      className={`px-3 py-1 text-xs rounded cursor-pointer ${
-                        user.isActive
+                      className={`px-3 py-1 text-xs rounded cursor-pointer ${user.isActive
                           ? "bg-red-600 hover:bg-red-700"
                           : "bg-green-600 hover:bg-green-700"
-                      } text-white disabled:opacity-50`}
+                        } text-white disabled:opacity-50`}
                     >
                       {togglingUserId === user._id
                         ? "Processing..."
                         : user.isActive
-                        ? "Deactivate"
-                        : "Activate"}
+                          ? "Deactivate"
+                          : "Activate"}
                     </button>
                     <button
                       onClick={() =>

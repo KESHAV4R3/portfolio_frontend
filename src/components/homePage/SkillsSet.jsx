@@ -202,7 +202,6 @@ const SkillsSet = () => {
           variants={staggerContainer}
           onViewportEnter={() => {
             if (!isVisible) {
-              console.log("Skills section is now visible on screen!");
               setIsVisible(true); // Prevent future logs
             }
           }}

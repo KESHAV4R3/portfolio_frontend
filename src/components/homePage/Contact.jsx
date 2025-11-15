@@ -48,19 +48,23 @@ const Contact = () => {
     };
   }, []);
 
-  const onSubmit = async (data) => {
-    console.log(data);
+  const onSubmit = async (data, e) => {
+    e.preventDefault(); // Prevent default form submission
     setloading(true);
     try {
       const url = apiLinks.mailToAdmin;
-      const response = await apiConnector("post", url, data);
-      if (!response.success) {
-        throw new Error(success.message);
-      } else {
-        toast.success("messsage send to admin successfully");
+      const response = await apiConnector("POST", url, data);
+      
+      if (!response?.success) {
+        throw new Error(response?.message || 'Failed to send message');
       }
+      
+      toast.success("Message sent successfully!");
+      // Reset form after successful submission
+      e.target.reset();
     } catch (error) {
-      toast.error(error);
+      console.error('Error submitting form:', error);
+      toast.error(error.message || 'Failed to send message. Please try again.');
     } finally {
       setloading(false);
     }
