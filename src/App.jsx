@@ -4,7 +4,7 @@ import HomePage from "./page/HomePage";
 import Header from "./components/application/Header";
 import AdminPage from "./page/AdminPage";
 import { Toaster } from "react-hot-toast";
-// Other pages load lazily
+// Other pages load lazily // 
 const NotFoundPage = lazy(() => import("./page/NotFoundPage"));
 const App = () => {
   return (
