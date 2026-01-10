@@ -6,6 +6,14 @@ export default defineConfig({
   base: './',
   plugins: [react(), tailwindcss()],
   server: {
-    historyApiFallback: true,
+    // Remove historyApiFallback as it's not a valid Vite option
+  },
+  // Add this for proper SPA fallback in production
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: undefined,
+      },
+    },
   },
 });
