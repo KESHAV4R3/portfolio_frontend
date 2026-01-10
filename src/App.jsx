@@ -1,5 +1,5 @@
 import { Suspense, lazy, useCallback } from "react";
-import { Routes, Route } from "react-router-dom";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./page/HomePage";
 import Header from "./components/application/Header";
 import AdminPage from "./page/AdminPage";

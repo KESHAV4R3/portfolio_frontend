@@ -8,376 +8,233 @@ import apiLinks from "../../services/apliLinks";
 import apiConnector from "../../services/apiConnector";
 import toast from "react-hot-toast";
 import { IoIosSend } from "react-icons/io";
+import { FaGithub, FaLinkedin, FaTwitter, FaTerminal, FaNetworkWired } from "react-icons/fa";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const Contact = () => {
   const dispatch = useDispatch();
-  const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef(null);
   const formRef = useRef(null);
-  const bubblesRef = useRef([]);
-  const particlesRef = useRef([]);
-  const [loading, setloading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
+  // Intersection Observer
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            dispatch(updateCurrentSection("Contact"));
-          }
-        });
+        if (entries[0].isIntersecting) {
+          dispatch(updateCurrentSection("Contact"));
+        }
       },
-      { threshold: 0.6 }
+      { threshold: 0.5 }
     );
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
+    if (sectionRef.current) observer.observe(sectionRef.current);
+    return () => observer.disconnect();
+  }, [dispatch]);
 
-    return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
-      }
-    };
-  }, []);
-
+  // Submit Handler
   const onSubmit = async (data, e) => {
-    e.preventDefault(); // Prevent default form submission
-    setloading(true);
+    e.preventDefault();
+    setLoading(true);
     try {
-      const url = apiLinks.mailToAdmin;
-      const response = await apiConnector("POST", url, data);
+      const response = await apiConnector("POST", apiLinks.mailToAdmin, data);
       
-      if (!response?.success) {
-        throw new Error(response?.message || 'Failed to send message');
-      }
+      // Robust check for different API response structures
+      const isSuccess = response?.success || response?.data?.success;
       
-      toast.success("Message sent successfully!");
-      // Reset form after successful submission
+      if (!isSuccess) throw new Error(response?.message || 'Failed');
+      
+      toast.success("Packet Transmission Successful!");
       e.target.reset();
     } catch (error) {
-      console.error('Error submitting form:', error);
-      toast.error(error.message || 'Failed to send message. Please try again.');
+      toast.error('Transmission Failed. Connection Refused.');
     } finally {
-      setloading(false);
+      setLoading(false);
     }
   };
 
-  // Animation setup
+  // GSAP Animations
   useEffect(() => {
     const section = sectionRef.current;
     const form = formRef.current;
 
-    if (!section || !form) return;
+    const ctx = gsap.context(() => {
+        // Entrance Animation
+        gsap.fromTo(form, 
+            { y: 30, opacity: 0 },
+            {
+                y: 0,
+                opacity: 1,
+                duration: 0.8,
+                ease: "power2.out",
+                scrollTrigger: {
+                    trigger: section,
+                    start: "top 75%",
+                }
+            }
+        );
 
-    // Section animation
-    gsap.from(section, {
-      scrollTrigger: {
-        trigger: section,
-        start: "top 80%",
-        toggleActions: "play none none none",
-      },
-      opacity: 0,
-      y: 50,
-      duration: 1,
-      ease: "power3.out",
-    });
+    }, sectionRef);
 
-    // Form animation
-    gsap.from(form, {
-      scrollTrigger: {
-        trigger: form,
-        start: "top 80%",
-        toggleActions: "play none none none",
-      },
-      opacity: 0,
-      y: 30,
-      duration: 0.8,
-      delay: 0.3,
-      ease: "back.out(1.7)",
-    });
-
-    // Bubble animations
-    bubblesRef.current.forEach((bubble, index) => {
-      if (!bubble) return;
-
-      const size = Math.random() * 80 + 40;
-      const duration = Math.random() * 15 + 15;
-      const delay = Math.random() * 5;
-      const x = Math.random() * 100;
-
-      gsap.set(bubble, {
-        width: size,
-        height: size,
-        x: `${x}%`,
-        y: "120%",
-        opacity: 0.2 + Math.random() * 0.3,
-      });
-
-      gsap.to(bubble, {
-        y: `-${size}px`,
-        duration: duration,
-        delay: delay,
-        repeat: -1,
-        ease: "none",
-        onComplete: () => {
-          gsap.set(bubble, { y: "120%" });
-        },
-      });
-    });
-
-    // Particle animations
-    particlesRef.current.forEach((particle, index) => {
-      if (!particle) return;
-
-      const size = Math.random() * 4 + 1;
-      const duration = Math.random() * 20 + 10;
-      const delay = Math.random() * 5;
-      const x = Math.random() * 100;
-      const opacity = 0.1 + Math.random() * 0.2;
-
-      gsap.set(particle, {
-        width: size,
-        height: size,
-        x: `${x}%`,
-        y: "120%",
-        opacity: opacity,
-      });
-
-      gsap.to(particle, {
-        y: `-${size}px`,
-        duration: duration,
-        delay: delay,
-        repeat: -1,
-        ease: "none",
-        onComplete: () => {
-          gsap.set(particle, { y: "120%" });
-        },
-      });
-    });
-
-    return () => {
-      ScrollTrigger.getAll().forEach((t) => t.kill());
-    };
+    return () => ctx.revert();
   }, []);
 
   return (
     <section
       ref={sectionRef}
-      onViewportEnter={() => {
-        if (!isVisible) {
-          setIsVisible(true); // Prevent future logs
-        }
-      }}
-      className="relative overflow-hidden min-h-screen py-5 px-4 sm:px-6 lg:px-8 bg-gray-900"
       id="contact"
+      className="relative min-h-screen py-24 px-4 flex items-center justify-center bg-[#050505] overflow-hidden font-mono"
     >
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Large bubbles */}
-        {[...Array(10)].map((_, i) => (
-          <div
-            key={`bubble-${i}`}
-            ref={(el) => (bubblesRef.current[i] = el)}
-            className="absolute rounded-full bg-gradient-to-br from-indigo-600/10 to-purple-600/10 backdrop-blur-[1px]"
-          />
-        ))}
-
-        {/* Small particles */}
-        {[...Array(30)].map((_, i) => (
-          <div
-            key={`particle-${i}`}
-            ref={(el) => (particlesRef.current[i] = el)}
-            className="absolute rounded-full bg-indigo-400/20"
-          />
-        ))}
-
-        {/* Grid pattern */}
-        <div className="absolute inset-0 opacity-10 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+      {/* ---------------- BACKGROUND ATMOSPHERE ---------------- */}
+      <div className="absolute inset-0 pointer-events-none">
+         {/* Cyber Grid */}
+         <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,0,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,0,0.03)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+         
+         {/* Scanline Overlay */}
+         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.05]"></div>
+         
+         {/* Glows */}
+         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-green-900/10 rounded-full blur-[120px]"></div>
+         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-900/10 rounded-full blur-[120px]"></div>
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-6xl font-bold text-white mb-4">
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500">
-              Contact Me
-            </span>
-          </h2>
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            Let's build something amazing together. Send me a message and I'll
-            respond promptly.
-          </p>
-        </div>
 
-        <div className="flex justify-center">
-          <form
-            ref={formRef}
-            onSubmit={handleSubmit(onSubmit)}
-            className="w-full max-w-2xl bg-gray-800/80 backdrop-blur-md rounded-xl p-8 sm:p-10 shadow-xl border border-gray-700/30 hover:border-indigo-500/30 transition-all duration-300"
-          >
-            <div className="space-y-6">
-              {/* Name Field */}
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-medium text-gray-300 mb-2"
-                >
-                  Your Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  {...register("name", { required: "Name is required" })}
-                  className="w-full px-4 py-3 rounded-lg bg-gray-700/70 border border-gray-600/50 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 text-white placeholder-gray-400 transition-all duration-200"
-                  placeholder="John Doe"
-                />
-                {errors.name && (
-                  <p className="mt-1 text-sm text-red-400">
-                    {errors.name.message}
-                  </p>
-                )}
-              </div>
+      {/* ---------------- CONTENT CONTAINER ---------------- */}
+      <div className="relative z-10 w-full max-w-6xl grid lg:grid-cols-2 gap-12 lg:gap-24 items-center">
+        
+        {/* LEFT: TEXT & INFO */}
+        <div className="text-left space-y-8">
+            <div>
+                <div className="flex items-center gap-2 mb-4">
+                    <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                    <span className="text-green-500 text-xs tracking-widest uppercase">Encryption: Enabled</span>
+                </div>
+                <h2 className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight">
+                    Initialize <br />
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-600">
+                        Handshake
+                    </span>
+                </h2>
+                <p className="text-gray-400 text-lg max-w-md leading-relaxed border-l-2 border-green-500/30 pl-4">
+                    Targeting a collaboration? Requesting system access? 
+                    Open a secure channel and let's deploy solutions.
+                </p>
+            </div>
 
-              {/* Email Field */}
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-300 mb-2"
-                >
-                  Email Address <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  {...register("email", {
-                    required: "Email is required",
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: "Invalid email address",
-                    },
-                  })}
-                  className="w-full px-4 py-3 rounded-lg bg-gray-700/70 border border-gray-600/50 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 text-white placeholder-gray-400 transition-all duration-200"
-                  placeholder="john@example.com"
-                />
-                {errors.email && (
-                  <p className="mt-1 text-sm text-red-400">
-                    {errors.email.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Message Field */}
-              <div>
-                <label
-                  htmlFor="message"
-                  className="block text-sm font-medium text-gray-300 mb-2"
-                >
-                  Your Message <span className="text-red-500">*</span>
-                </label>
-                <textarea
-                  id="message"
-                  rows={5}
-                  {...register("message", {
-                    required: "Message is required",
-                    minLength: {
-                      value: 10,
-                      message: "Message must be at least 10 characters",
-                    },
-                  })}
-                  className="w-full px-4 py-3 rounded-lg bg-gray-700/70 border border-gray-600/50 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 text-white placeholder-gray-400 transition-all duration-200"
-                  placeholder="Hello, I'd like to talk about..."
-                />
-                {errors.message && (
-                  <p className="mt-1 text-sm text-red-400">
-                    {errors.message.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Submit Button */}
-              <div className="pt-2">
-                <button
-                  type="submit"
-                  className="cursor-pointer disabled:cursor-not-allowed w-full px-6 py-3.5 text-lg font-medium text-white bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg hover:from-indigo-700 hover:to-purple-700 focus:ring-4 focus:outline-none focus:ring-indigo-800/50 shadow-lg hover:shadow-indigo-500/30 transition-all duration-300 flex items-center justify-center gap-2"
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <div className="flex justify-center items-center gap-3">
-                      <div className="w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
-                      <div>Sending message ....</div>
+            {/* Connection Details */}
+            <div className="space-y-4 text-sm">
+                <div className="group flex items-center gap-4 p-4 bg-[#0a0a0a] border border-green-900/30 rounded hover:border-green-500/50 transition-colors">
+                    <div className="p-3 bg-green-900/10 rounded text-green-500 group-hover:text-white transition-colors">
+                        <FaTerminal size={18} />
                     </div>
-                  ) : (
-                    <div className="flex justify-center items-center gap-3">
-                      <IoIosSend />
-                      <div>Send Message</div>
+                    <div>
+                        <p className="text-gray-500 text-[10px] uppercase tracking-wider">Communication Protocol</p>
+                        <a href="mailto:keshav.buillds@gmail.com" className="text-white hover:text-green-400 transition-colors">keshav.buillds@gmail.com</a>
                     </div>
-                  )}
-                </button>
-              </div>
+                </div>
+
+                <div className="group flex items-center gap-4 p-4 bg-[#0a0a0a] border border-green-900/30 rounded hover:border-green-500/50 transition-colors">
+                    <div className="p-3 bg-green-900/10 rounded text-green-500 group-hover:text-white transition-colors">
+                        <FaNetworkWired size={18} />
+                    </div>
+                    <div>
+                        <p className="text-gray-500 text-[10px] uppercase tracking-wider">Direct Uplink</p>
+                        <a href="tel:+919693209390" className="text-white hover:text-green-400 transition-colors">+91 9693209390</a>
+                    </div>
+                </div>
             </div>
-          </form>
+
+            {/* Social Links */}
+            <div className="flex gap-4 pt-4">
+                {[FaGithub, FaLinkedin, FaTwitter].map((Icon, i) => (
+                    <a key={i} href="#" className="p-3 bg-[#0a0a0a] border border-gray-800 rounded-full text-gray-400 hover:text-white hover:border-green-500 hover:bg-green-900/20 transition-all">
+                        <Icon size={18} />
+                    </a>
+                ))}
+            </div>
         </div>
 
-        {/* Additional contact info */}
-        <div className="mt-16 text-center">
-          <div className="inline-flex flex-col sm:flex-row items-center gap-4 sm:gap-8 bg-gray-800/50 backdrop-blur-sm rounded-xl px-8 py-6 border border-gray-700/30">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-full bg-indigo-500/10">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 text-indigo-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                  />
-                </svg>
-              </div>
-              <a
-                href="mailto:keshav.buillds@gmail.com"
-                className="text-indigo-400 hover:text-indigo-300 transition-colors"
-              >
-                keshav.buillds@gmail.com
-              </a>
+
+        {/* RIGHT: THE TERMINAL FORM */}
+        <div ref={formRef} className="w-full">
+            <div className="relative bg-[#0c0c0c] border border-gray-800 rounded-lg overflow-hidden shadow-[0_0_50px_rgba(0,255,0,0.05)]">
+                
+                {/* Terminal Header */}
+                <div className="bg-[#111] px-4 py-3 flex items-center justify-between border-b border-gray-800">
+                    <div className="flex gap-2">
+                        <div className="w-2.5 h-2.5 rounded-full bg-red-500/50 border border-red-500/30"></div>
+                        <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/50 border border-yellow-500/30"></div>
+                        <div className="w-2.5 h-2.5 rounded-full bg-green-500/50 border border-green-500/30"></div>
+                    </div>
+                    <div className="text-[10px] text-gray-500 font-bold tracking-widest uppercase">ROOT_USER/MSG_RELAY</div>
+                </div>
+
+                {/* Form Content */}
+                <form onSubmit={handleSubmit(onSubmit)} className="p-6 md:p-8 space-y-6">
+                    
+                    {/* Name */}
+                    <div className="group">
+                        <label className="block text-[10px] text-green-600 mb-1.5 uppercase tracking-wider font-bold">User_ID</label>
+                        <input
+                            {...register("name", { required: true })}
+                            className="w-full bg-[#050505] border border-gray-800 rounded p-3 text-white text-sm focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-900/50 transition-all"
+                            placeholder="Enter Identity"
+                            autoComplete="off"
+                        />
+                        {errors.name && <span className="text-red-500 text-[10px] mt-1 block">&gt;&gt; ERROR: IDENTITY_REQUIRED</span>}
+                    </div>
+
+                    {/* Email */}
+                    <div className="group">
+                        <label className="block text-[10px] text-green-600 mb-1.5 uppercase tracking-wider font-bold">Reply_Protocol</label>
+                        <input
+                            {...register("email", { required: true })}
+                            className="w-full bg-[#050505] border border-gray-800 rounded p-3 text-white text-sm focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-900/50 transition-all"
+                            placeholder="user@network.com"
+                            autoComplete="off"
+                        />
+                         {errors.email && <span className="text-red-500 text-[10px] mt-1 block">&gt;&gt; ERROR: INVALID_DESTINATION</span>}
+                    </div>
+
+                    {/* Message */}
+                    <div className="group">
+                        <label className="block text-[10px] text-green-600 mb-1.5 uppercase tracking-wider font-bold">Data_Payload</label>
+                        <textarea
+                            rows={4}
+                            {...register("message", { required: true })}
+                            className="w-full bg-[#050505] border border-gray-800 rounded p-3 text-white text-sm focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-900/50 transition-all resize-none"
+                            placeholder="Input transmission data..."
+                        />
+                         {errors.message && <span className="text-red-500 text-[10px] mt-1 block">&gt;&gt; ERROR: EMPTY_PAYLOAD</span>}
+                    </div>
+
+                    {/* Submit */}
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full py-4 bg-green-700 hover:bg-green-600 text-black font-bold text-xs uppercase tracking-[0.2em] rounded shadow-lg shadow-green-900/20 hover:shadow-green-500/20 transition-all flex items-center justify-center gap-3 relative overflow-hidden group disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                         {loading ? (
+                             <>
+                                <span className="animate-pulse">UPLOADING...</span>
+                             </>
+                         ) : (
+                             <>
+                                <span>EXECUTE_SEND</span>
+                                <IoIosSend className="group-hover:translate-x-1 transition-transform" />
+                             </>
+                         )}
+                    </button>
+                </form>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-full bg-purple-500/10">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 text-purple-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                  />
-                </svg>
-              </div>
-              <a
-                href="tel:+1234567890"
-                className="text-purple-400 hover:text-purple-300 transition-colors"
-              >
-                +91 9693209390
-              </a>
-            </div>
-          </div>
         </div>
+
       </div>
     </section>
   );

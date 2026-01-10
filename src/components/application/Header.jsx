@@ -2,44 +2,32 @@ import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaGithub, FaLinkedin, FaBars, FaTimes } from "react-icons/fa";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { SiLeetcode } from "react-icons/si";
-import { useLocation } from "react-router-dom";
 
 const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const currentSection = useSelector(
-    (state) => state.application.currentSection
-  );
-  const [currentUnderline, setCurrentUnderLine] = useState("Home");
+  const currentSection = useSelector((state) => state.application.currentSection);
+  
   const [scrolled, setScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [forbidScroll, setForbidScroll] = useState(false);
 
-  // Effect to stop the scroll behaviour
+  // Scroll Detection
   useEffect(() => {
-    if (forbidScroll) {
-      document.body.style.overflow = "hidden";
-      document.documentElement.style.overflow = "hidden"; // Also lock html element
-    } else {
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
-    };
-  }, [forbidScroll]);
-
-  // Effect to add scrolled state
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Lock Body Scroll on Mobile Menu Open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+  }, [isOpen]);
 
   const navLinks = [
     { name: "Home", href: "#home" },
@@ -49,293 +37,175 @@ const Header = () => {
     { name: "Contact", href: "#contact" },
   ];
 
-  const navigateHome = useCallback(() => {
-    navigate("/");
-  }, [navigate]);
-
-  const handleNavLinkClick = (name, href) => {
-    setCurrentUnderLine(name);
+  const handleNavLinkClick = (href) => {
     if (href.startsWith("#")) {
       const element = document.querySelector(href);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
-      }
+      if (element) element.scrollIntoView({ behavior: "smooth" });
     } else {
       navigate(href);
     }
     setIsOpen(false);
-    setForbidScroll(false);
   };
 
-  // Animation variants
-  const mobileMenuVariants = {
-    hidden: { opacity: 0, x: "100%" },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: {
-        type: "spring",
-        stiffness: 100,
-        damping: 20,
-      },
-    },
-    exit: {
-      opacity: 0,
-      x: "100%",
-      transition: {
-        ease: "easeInOut",
-        duration: 0.3,
-      },
-    },
+  // ---------------- VARIANTS ----------------
+  const menuVariants = {
+    closed: { x: "100%", opacity: 0 },
+    open: { 
+        x: 0, 
+        opacity: 1,
+        transition: { type: "spring", stiffness: 300, damping: 30 }
+    }
   };
 
-  const navItemVariants = {
-    hidden: { opacity: 0, y: -20 },
-    visible: (i) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: i * 0.1,
-        type: "spring",
-        stiffness: 150,
-      },
-    }),
+  const linkVariants = {
+    closed: { x: 50, opacity: 0 },
+    open: (i) => ({ 
+        x: 0, 
+        opacity: 1, 
+        transition: { delay: i * 0.1 } 
+    })
   };
 
-  const backdropVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1 },
-  };
+  // Hide Navbar on Admin Page
+  if (location.pathname.includes("admin")) return null;
 
   return (
     <header
-      className={`fixed w-full z-50 transition-all duration-300 ${
-        scrolled ? "backdrop-blur-lg shadow-md" : "bg-transparent"
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 border-b ${
+        scrolled 
+          ? "bg-[#050505]/80 backdrop-blur-md border-white/5 py-3 shadow-lg shadow-blue-900/5" 
+          : "bg-transparent border-transparent py-5"
       }`}
     >
-      <div className={`w-full mx-auto px-4 sm:px-8 lg:px-13`}>
-        <div className="flex justify-between items-center py-3 md:py-4">
-          {/* Logo with enhanced animation */}
-          <motion.div
-            onClick={navigateHome}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            transition={{
-              duration: 0.5,
-              type: "spring",
-              stiffness: 200,
-            }}
-            className="text-3xl cursor-pointer sm:text-4xl font-extrabold text-gray-800 dark:text-white"
-          >
-            <a href="#home">
-              <span className="text-blue-600 dark:text-blue-400">{"<"}</span>{" "}
-              <span className={`text-white`}>4R3</span>{" "}
-              <span className="text-blue-600 dark:text-blue-400">{"/>"}</span>
-            </a>
-          </motion.div>
-          {/* Desktop Navigation with enhanced animations */}
-          {!location.pathname.includes("admin") && (
-            <nav className="hidden md:flex items-center gap-x-6">
-              <div className="flex md:gap-7 lg:gap-10">
-                {navLinks.map((link, index) => (
-                  <motion.button
-                    key={link.name}
-                    custom={index}
-                    initial="hidden"
-                    animate="visible"
-                    variants={navItemVariants}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onHoverStart={() => setCurrentUnderLine("")}
-                    onHoverEnd={() => setCurrentUnderLine("Home")}
-                    onClick={() => handleNavLinkClick(link.name, link.href)}
-                    className={`cursor-pointer relative text-base lg:text-lg font-semibold ${
-                      currentSection === link.name
-                        ? "text-blue-500"
-                        : "text-white"
-                    }  transition-all duration-200 group`}
-                  >
-                    {link.name}
-                    <motion.span
-                      className={`absolute -bottom-1 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400`}
-                      initial={{ scaleX: 0 }}
-                      animate={{
-                        scaleX: currentSection === link.name ? 1 : 0,
-                        opacity: currentSection === link.name ? 1 : 0,
-                      }}
-                      transition={{ type: "spring", stiffness: 300 }}
-                    />
-                  </motion.button>
-                ))}
-              </div>
+      <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+        
+        {/* LOGO */}
+        <motion.div
+          onClick={() => navigate("/")}
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="cursor-pointer group"
+        >
+            <h1 className="text-2xl font-bold tracking-tighter text-white">
+                <span className="text-blue-500 group-hover:text-purple-500 transition-colors duration-300">{"<"}</span>
+                <span className="mx-1">4R3</span>
+                <span className="text-blue-500 group-hover:text-purple-500 transition-colors duration-300">{"/>"}</span>
+            </h1>
+        </motion.div>
 
-              {/* Social Icons with animations */}
-              <motion.div
-                className="flex space-x-4 ml-4"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
-              >
-                <motion.a
-                  href="https://github.com/keshav4r3"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ y: -2, scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                >
-                  <FaGithub size={20} />
-                </motion.a>
-                <motion.a
-                  href="https://leetcode.com/u/keshav4r3/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ y: -2, scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                >
-                  <SiLeetcode size={20} />
-                </motion.a>
-                <motion.a
-                  href="https://www.linkedin.com/in/keshav4r3/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ y: -2, scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                >
-                  <FaLinkedin size={20} />
-                </motion.a>
-              </motion.div>
-            </nav>
-          )}
-          {/* Mobile Menu Button with animation */}
-          {!location.pathname.includes("admin") && (
-            <motion.button
-              onClick={() => {
-                setIsOpen(!isOpen);
-                setForbidScroll(!isOpen);
-              }}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              className="cursor-pointer md:hidden text-gray-700 dark:text-gray-300 focus:outline-none"
-              aria-label="Toggle menu"
-            >
-              {isOpen ? (
-                <motion.div
-                  initial={{ rotate: 0 }}
-                  animate={{ rotate: 360 }}
-                  transition={{ type: "spring" }}
-                >
-                  <FaTimes size={24} />
-                </motion.div>
-              ) : (
-                <motion.div
-                  initial={{ rotate: 0 }}
-                  animate={{ rotate: 0 }}
-                  transition={{ type: "spring" }}
-                >
-                  <FaBars size={24} />
-                </motion.div>
-              )}
-            </motion.button>
-          )}
-        </div>
+        {/* DESKTOP NAV */}
+        <nav className="hidden md:flex items-center gap-8">
+            <ul className="flex items-center gap-8 bg-white/5 px-6 py-2 rounded-full border border-white/5 backdrop-blur-sm">
+                {navLinks.map((link) => {
+                    const isActive = currentSection === link.name;
+                    return (
+                        <li key={link.name}>
+                            <button
+                                onClick={() => handleNavLinkClick(link.href)}
+                                className={`relative text-sm font-medium transition-colors duration-300 ${
+                                    isActive ? "text-white" : "text-gray-400 hover:text-white"
+                                }`}
+                            >
+                                {link.name}
+                                {/* Active Dot Indicator */}
+                                {isActive && (
+                                    <motion.span 
+                                        layoutId="activeDot"
+                                        className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1 h-1 bg-blue-500 rounded-full shadow-[0_0_8px_#3b82f6]"
+                                    />
+                                )}
+                            </button>
+                        </li>
+                    );
+                })}
+            </ul>
+
+            {/* Social Icons (Desktop) */}
+            <div className="flex gap-4 border-l border-white/10 pl-6">
+                <SocialLink href="https://github.com/keshav4r3" Icon={FaGithub} />
+                <SocialLink href="https://linkedin.com/in/keshav4r3" Icon={FaLinkedin} />
+            </div>
+        </nav>
+
+        {/* MOBILE TOGGLE */}
+        <button 
+            onClick={() => setIsOpen(!isOpen)}
+            className="md:hidden text-white p-2 z-50 relative"
+        >
+            {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
+        </button>
       </div>
 
-      {/* Mobile Menu with enhanced animations */}
+      {/* MOBILE MENU OVERLAY */}
       <AnimatePresence>
         {isOpen && (
-          <>
-            <motion.div
-              key="backdrop"
-              variants={backdropVariants}
-              initial="hidden"
-              animate="visible"
-              exit="hidden"
-              onClick={() => {
-                setIsOpen(false);
-                setForbidScroll(false);
-              }}
-              className="fixed inset-0 bg-black bg-opacity-50 z-40"
-            />
-
-            <motion.div
-              key="mobile-menu"
-              variants={mobileMenuVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              className={`md:hidden fixed top-0 right-0 h-screen w-screen  bg-blue-900 dark:bg-gray-900 z-50 flex flex-col items-center justify-center space-y-8 pt-20 pb-10`}
-            >
-              <motion.button
-                onClick={() => {
-                  setIsOpen(false);
-                  setForbidScroll(false);
-                }}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className="cursor-pointer absolute top-6 right-6 text-gray-300"
-                aria-label="Close menu"
-              >
-                <FaTimes size={24} />
-              </motion.button>
-
-              {navLinks.map((link, index) => (
-                <motion.button
-                  key={link.name}
-                  custom={index}
-                  variants={navItemVariants}
-                  initial="hidden"
-                  animate="visible"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => handleNavLinkClick(link.name, link.href)}
-                  className={`cursor-pointer text-2xl font-medium ${
-                    currentUnderline === link.name
-                      ? "text-blue-400"
-                      : "text-gray-300"
-                  } hover:text-blue-400 transition-colors`}
+            <>
+                <motion.div 
+                    initial={{ opacity: 0 }} 
+                    animate={{ opacity: 1 }} 
+                    exit={{ opacity: 0 }}
+                    onClick={() => setIsOpen(false)}
+                    className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
+                />
+                
+                <motion.div
+                    variants={menuVariants}
+                    initial="closed"
+                    animate="open"
+                    exit="closed"
+                    className="fixed top-0 right-0 h-full w-[75%] max-w-sm bg-[#0a0a0a] border-l border-white/10 z-50 md:hidden flex flex-col justify-center px-8 shadow-2xl"
                 >
-                  {link.name}
-                </motion.button>
-              ))}
+                    <div className="absolute top-8 left-8">
+                        <span className="text-blue-500 font-mono text-xs">Menu_v1.0</span>
+                    </div>
 
-              <motion.div
-                className="flex space-x-8 mt-12"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-              >
-                <motion.a
-                  href="https://github.com/keshav4r3"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ y: -3, scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="p-2 text-gray-300 hover:text-blue-400 transition-colors"
-                >
-                  <FaGithub size={28} />
-                </motion.a>
-                <motion.a
-                  href="https://www.linkedin.com/in/keshav4r3/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ y: -3, scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="p-2 text-gray-300 hover:text-blue-400 transition-colors"
-                >
-                  <FaLinkedin size={28} />
-                </motion.a>
-              </motion.div>
-            </motion.div>
-          </>
+                    <ul className="space-y-6">
+                        {navLinks.map((link, i) => (
+                            <motion.li 
+                                key={link.name}
+                                custom={i}
+                                variants={linkVariants}
+                            >
+                                <button
+                                    onClick={() => handleNavLinkClick(link.href)}
+                                    className={`text-3xl font-bold tracking-tight transition-colors ${
+                                        currentSection === link.name ? "text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500" : "text-gray-400 hover:text-white"
+                                    }`}
+                                >
+                                    {link.name}
+                                </button>
+                            </motion.li>
+                        ))}
+                    </ul>
+
+                    <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.5 }}
+                        className="mt-12 pt-8 border-t border-white/10 flex gap-6"
+                    >
+                        <SocialLink href="https://github.com/keshav4r3" Icon={FaGithub} size={24} />
+                        <SocialLink href="https://linkedin.com/in/keshav4r3" Icon={FaLinkedin} size={24} />
+                        <SocialLink href="https://leetcode.com/u/keshav4r3/" Icon={SiLeetcode} size={24} />
+                    </motion.div>
+                </motion.div>
+            </>
         )}
       </AnimatePresence>
     </header>
   );
 };
+
+// Helper Component for Social Links to reduce repetition
+const SocialLink = ({ href, Icon, size = 20 }) => (
+    <a 
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-gray-400 hover:text-white hover:scale-110 transition-all duration-200"
+    >
+        <Icon size={size} />
+    </a>
+);
 
 export default Header;

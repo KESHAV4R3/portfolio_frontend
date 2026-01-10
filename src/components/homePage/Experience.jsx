@@ -20,98 +20,172 @@ const Experience = () => {
 
   const experiences = [
     {
+      id: "LOG_01",
       company: "Zupper Commerce Pvt. Ltd.",
       position: "Frontend Developer Intern",
-      duration: "Jul 2025 – October 2025",
-      location: "Remote",
+      duration: "Jul 2025 – Current Working",
+      location: "Remote Node",
       website: "https://seller.zupper.co",
+      tech: ["React", "Redux", "Tailwind", "Git"],
       points: [
-        "Engineered responsive UI for seller/admin features (product listing, views, modals) to improve workflow",
-        "Boosted performance and scalability by debugging, refactoring, and modularizing legacy code",
-        "Collaborated in an Agile environment using Git and peer reviews to maintain code quality and meet sprint goals"
+        "Engineered responsive UI for seller/admin features (product listing, views, modals) improving workflow efficiency by 40%.",
+        "Boosted application performance by debugging and refactoring legacy codebases, resulting in faster load times.",
+        "Collaborated in an Agile environment using Git for version control and participating in daily sprints."
       ]
     }
   ];
 
+  // Animation Variants
+  const container = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.2 }
+    }
+  };
+
+  const itemVariant = {
+    hidden: { opacity: 0, x: -50, filter: "blur(10px)" },
+    visible: { 
+      opacity: 1, 
+      x: 0, 
+      filter: "blur(0px)",
+      transition: { type: "spring", stiffness: 50, damping: 20 }
+    }
+  };
+
   return (
-    <section ref={ref} id="experience" className="py-1 bg-gray-900 text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section ref={ref} id="experience" className="relative py-24 bg-[#050505] text-green-500 overflow-hidden font-mono">
+      
+      {/* ---------------- BACKGROUND ATMOSPHERE ---------------- */}
+      <div className="absolute inset-0 pointer-events-none">
+          {/* Cyber Grid */}
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,0,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,0,0.03)_1px,transparent_1px)] bg-[size:30px_30px] opacity-50"></div>
+          {/* Scanline */}
+          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.05]"></div>
+          {/* Glow */}
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-green-900/10 rounded-full blur-[120px]"></div>
+      </div>
+
+
+      {/* ---------------- MAIN INTERFACE ---------------- */}
+      <div className="max-w-5xl mx-auto px-6 sm:px-8 relative z-10">
+        
+        {/* Header Section */}
         <motion.div
-          className="text-center mb-16"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+          className="mb-16 border-b border-green-900/50 pb-4 flex items-end gap-4"
         >
-          <h2 className="text-4xl md:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-cyan-400 mb-4">
-            Experience
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tighter text-white">
+            <span className="text-green-500">./</span>Experience<span className="animate-pulse">_</span>
           </h2>
-          <div className="w-20 h-1 bg-gradient-to-r from-blue-500 to-cyan-400 mx-auto rounded-full"></div>
+          <span className="text-xs text-green-700 pb-2 mb-1 hidden sm:block">
+            // EXECUTE_HISTORY_LOG
+          </span>
         </motion.div>
         
-        <div className="relative max-w-4xl mx-auto">
-          {/* Timeline line */}
-          <div className="absolute left-1/2 w-1 h-full bg-gradient-to-b from-blue-500 to-cyan-400 transform -translate-x-1/2"></div>
-          
+        {/* Timeline Layout */}
+        <motion.div 
+            variants={container}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="relative ml-4 md:ml-6 space-y-12"
+        >
+          {/* Timeline Vertical Line (Circuit Trace) */}
+          <div className="absolute left-0 top-0 bottom-0 w-[1px] bg-gradient-to-b from-green-500/50 via-green-900/20 to-transparent border-r border-dashed border-green-500/30"></div>
+
           {experiences.map((exp, index) => (
             <motion.div
               key={index}
-              className={`relative mb-16 ${index % 2 === 0 ? 'md:pr-12' : 'md:pl-12'}`}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              variants={itemVariant}
+              className="relative pl-12"
             >
-              {/* Timeline dot */}
-              <div className="absolute left-1/2 transform -translate-x-1/2 md:left-0 md:right-auto md:translate-x-0 w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 border-4 border-gray-900 z-10"></div>
-              
-              <div className="bg-gray-800 rounded-xl p-8 shadow-2xl transform transition-all duration-300 hover:scale-[1.02]">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-                  <div className="mb-4 md:mb-0">
-                    <h3 className="text-2xl font-bold text-blue-400">{exp.position}</h3>
-                    <a 
-                      href={exp.website} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-xl font-semibold text-white hover:text-blue-400 transition-colors inline-flex items-center"
-                    >
-                      @ {exp.company}
-                      <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                      </svg>
-                    </a>
-                  </div>
-                  <div className="px-4 py-2 bg-gray-700 rounded-lg text-sm font-medium">
-                    {exp.duration}
-                  </div>
-                </div>
+              {/* Timeline Connector Node */}
+              <div className="absolute -left-[6px] top-6 flex items-center justify-center">
+                  <div className="w-3 h-3 bg-[#050505] border border-green-500 relative z-10 group-hover:bg-green-500 transition-colors"></div>
+                  <div className="absolute w-full h-[1px] bg-green-500/50 w-8 -right-8"></div>
+              </div>
+
+              {/* The "Terminal Window" Card */}
+              <div className="group relative bg-[#0a0a0a] border border-green-900/50 hover:border-green-500/50 transition-all duration-300 rounded-sm overflow-hidden">
                 
-                <div className="bg-gray-700/50 p-4 rounded-lg">
-                  <ul className="space-y-3">
-                    {exp.points.map((point, i) => (
-                      <li key={i} className="flex items-start group">
-                        <span className="text-blue-400 mr-3 mt-1 transform group-hover:scale-125 transition-transform">
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                          </svg>
-                        </span>
-                        <span className="text-gray-200">{point}</span>
-                      </li>
-                    ))}
-                  </ul>
+                {/* Decoration: Top Bar */}
+                <div className="bg-green-900/10 px-4 py-1 flex justify-between items-center border-b border-green-900/30">
+                    <span className="text-[10px] text-green-600 uppercase tracking-widest">ID: {exp.id}</span>
+                    <div className="flex gap-1">
+                        <div className="w-1.5 h-1.5 rounded-full bg-green-500/20"></div>
+                        <div className="w-1.5 h-1.5 rounded-full bg-green-500/20"></div>
+                    </div>
                 </div>
-                
-                <div className="mt-4 flex items-center text-sm text-gray-400">
-                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  {exp.location}
+
+                <div className="p-6 md:p-8 relative">
+                    {/* Hover Glow Effect */}
+                    <div className="absolute inset-0 bg-green-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+
+                    {/* Header Info */}
+                    <div className="flex flex-col md:flex-row md:items-start justify-between mb-6 gap-4">
+                        <div>
+                            <h3 className="text-2xl font-bold text-white group-hover:text-green-400 transition-colors flex items-center gap-2">
+                                <span>{">"}</span> {exp.position}
+                            </h3>
+                            <div className="flex items-center gap-2 mt-2">
+                                <span className="text-green-600">@</span>
+                                <a 
+                                    href={exp.website} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    className="text-lg text-gray-400 font-bold hover:text-white hover:underline decoration-green-500 underline-offset-4 transition-all"
+                                >
+                                    {exp.company}
+                                </a>
+                                <svg className="w-3 h-3 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                            </div>
+                        </div>
+                        
+                        <div className="flex flex-col items-end gap-1 text-xs text-green-600/80 font-bold">
+                            <span className="px-2 py-1 border border-green-900/50 bg-green-900/10 rounded-sm">
+                                {exp.duration}
+                            </span>
+                            <span className="flex items-center gap-1">
+                                <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                                {exp.location}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    {/* Console Output (Description) */}
+                    <div className="space-y-3 mb-6 font-mono text-sm">
+                        {exp.points.map((point, i) => (
+                        <div key={i} className="flex items-start gap-3 text-gray-400 group-hover:text-gray-300 transition-colors">
+                            <span className="text-green-500 mt-0.5 shrink-0">
+                                {i === 0 ? ">>" : "::"}
+                            </span>
+                            <span className="leading-relaxed">{point}</span>
+                        </div>
+                        ))}
+                    </div>
+
+                    {/* Tech Stack Array */}
+                    <div className="pt-4 border-t border-green-900/30">
+                        <span className="text-xs text-green-700 block mb-2">const tech_stack = [</span>
+                        <div className="flex flex-wrap gap-2 pl-4">
+                            {exp.tech.map((tag, i) => (
+                                <span key={i} className="text-xs font-bold text-gray-500 group-hover:text-green-400 transition-colors">
+                                    "{tag}"{i !== exp.tech.length -1 && ","}
+                                </span>
+                            ))}
+                        </div>
+                        <span className="text-xs text-green-700 block mt-2">];</span>
+                    </div>
+
                 </div>
               </div>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
