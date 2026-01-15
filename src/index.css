@@ -3,3 +3,27 @@
 @theme {
     --color-dark_bg: #000000
 }
+/* Optimization: Smooth Scrolling & GPU Boost */
+html {
+  scroll-behavior: smooth;
+  background-color: #050505;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Force hardware acceleration for moving parts */
+.smooth-gpu {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+/* Fix mobile jitter */
+@media (max-width: 768px) {
+  .animate-scanline, .cyber-grid {
+    display: none !important; 
+  }
+}
