@@ -53,7 +53,7 @@ const Projects = () => {
   ];
 
   return (
-    <section className="bg-[#050505] px-6 md:px-24 py-20 font-mono">
+    <section className="bg-[#050505] px-6 md:px-24 py-5 font-mono">
       <h2 className="text-center text-4xl md:text-6xl font-bold uppercase mb-16">
         Project <span className="text-green-500">Archive</span>
       </h2>

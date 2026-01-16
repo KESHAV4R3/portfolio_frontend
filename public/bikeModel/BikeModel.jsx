@@ -23,7 +23,7 @@ function Bike() {
     <group ref={modelRef} position={[0, -0.8, 0]}>
       <primitive
         object={bike.scene}
-        scale={window.innerWidth < 768 ? 0.7 : 0.8} // Responsive scaling
+        scale={window.innerWidth < 768 ? 0.5 : 0.8} // Responsive scaling
       />
     </group>
   );

@@ -12,15 +12,15 @@ const Experience = () => {
 
   return (
     <section ref={ref} id="experience" className="relative py-5 bg-[#050505] text-green-500 font-mono overflow-hidden">
-      <div className="max-w-5xl mx-auto px-6 relative z-10">
-       <div className="mb-16 border-b border-green-900/50 pb-4 text-center">
-  <h2 className="text-4xl md:text-5xl font-bold tracking-tighter text-white inline-block">./Experience</h2>
-</div>
+      <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
+        <div className="mb-12 sm:mb-16 border-b border-green-900/50 pb-4 text-center">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tighter text-white inline-block">./Experience</h2>
+        </div>
 
-        <div className="relative ml-4 border-l border-green-900/50 pl-12 space-y-12">
+        <div className="relative sm:ml-4 border-l border-green-900/50 sm:pl-12 pl-6 space-y-12">
             <div className="relative">
-              <div className="absolute -left-[54px] top-6 w-3 h-3 bg-black border border-green-500 z-10" />
-              <div className="bg-[#0a0a0a] border border-green-900/50 p-8 hover:border-green-500/50 transition-all">
+              <div className="absolute -left-[30px] sm:-left-[54px] top-6 w-3 h-3 bg-black border border-green-500 z-10" />
+              <div className="bg-[#0a0a0a] border border-green-900/50 p-4 sm:p-6 md:p-8 hover:border-green-500/50 transition-all w-full">
                 <div className="flex flex-col md:flex-row justify-between mb-6 gap-4">
                   <div>
                     <h3 className="text-2xl font-bold text-white mb-2">{">"} Frontend Developer Intern</h3>
