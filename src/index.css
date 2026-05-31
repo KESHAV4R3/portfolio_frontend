@@ -1,12 +1,35 @@
 @import "tailwindcss";
 
 @theme {
-    --color-dark_bg: #000000
+  --font-sans: 'Inter', sans-serif;
+  --font-display: 'Outfit', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  
+  --color-bg-dark: #050505;
+  --color-bg-card: #0a0a0c;
+  --color-accent-blue: #3b82f6;
+
+  --text-xs: 13px;
+  --text-sm: 15px;
+  --text-base: 17px;
+  --text-lg: 19px;
+  --text-xl: 21px;
+  --text-2xl: 25px;
+  --text-3xl: 31px;
+  --text-4xl: 37px;
+  --text-5xl: 49px;
+  --text-6xl: 61px;
 }
-/* Optimization: Smooth Scrolling & GPU Boost */
-html {
+
+/* Global Styles */
+html, body {
+  font-family: var(--font-sans);
+  background-color: var(--color-bg-dark);
+  color: #f4f4f5; /* zinc-100 */
   scroll-behavior: smooth;
-  background-color: #050505;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 * {
@@ -14,16 +37,75 @@ html {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Force hardware acceleration for moving parts */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+}
+
+pre, code {
+  font-family: var(--font-mono);
+}
+
+/* Custom Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050505;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #27272a;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3f3f46;
+}
+
+/* Premium Card & Glassmorphic Utilities */
+.glass-panel {
+  background: rgba(10, 10, 12, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-panel-hover {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-panel-hover:hover {
+  background: rgba(15, 15, 18, 0.85);
+  border-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5);
+}
+
+/* Text glow effects */
+.text-glow-blue {
+  text-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+}
+
+.text-glow-white {
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.25);
+}
+
+/* Elegant grid overlay background */
+.grid-bg {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+.radial-fade {
+  background: radial-gradient(circle at 50% 50%, rgba(5,5,5,0) 0%, rgba(5,5,5,1) 85%);
+}
+
 .smooth-gpu {
   transform: translateZ(0);
   backface-visibility: hidden;
   will-change: transform, opacity;
-}
-
-/* Fix mobile jitter */
-@media (max-width: 768px) {
-  .animate-scanline, .cyber-grid {
-    display: none !important; 
-  }
 }

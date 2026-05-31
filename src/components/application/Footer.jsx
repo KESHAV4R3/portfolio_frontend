@@ -1,79 +1,104 @@
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
-import { FaGithub, FaLinkedin, FaTwitter, FaHeart } from "react-icons/fa";
+import { useNavigate, Link, useLocation } from "react-router-dom";
+import { FaGithub, FaLinkedin, FaMedium } from "react-icons/fa";
 import { SiLeetcode } from "react-icons/si";
 
 const Footer = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const navigateAdminPage = () => {
-    navigate("/admin");
-  };
+  if (location.pathname.startsWith("/admin")) return null;
 
   const socialLinks = [
     { icon: FaGithub, link: "https://github.com/keshav4r3" },
     { icon: FaLinkedin, link: "https://www.linkedin.com/in/keshav4r3/" },
+    { icon: FaMedium, link: "https://medium.com/@4r3keshav" },
     { icon: SiLeetcode, link: "https://leetcode.com/u/keshav4r3/" },
-    { icon: FaTwitter, link: "#" }, // Add link if available
+  ];
+
+  const quickLinks = [
+    { name: "Home", path: "/" },
+    { name: "About", path: "/about" },
+    { name: "Experience", path: "/experience" },
+    { name: "Projects", path: "/projects" },
+    { name: "Services", path: "/services" },
+    { name: "Blogs", path: "/blogs" },
+    { name: "Contact", path: "/contact" },
   ];
 
   return (
-    <footer className="relative bg-[#050505] text-gray-300 overflow-hidden border-t border-white/5">
-      {/* Background Grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:30px_30px] opacity-20 pointer-events-none"></div>
+    <footer className="relative bg-[#050505] text-zinc-400 overflow-hidden border-t border-white/5 py-12">
+      {/* Background Subtle Grid Pattern */}
+      <div className="absolute inset-0 grid-bg opacity-40 pointer-events-none"></div>
 
-      <div className="max-w-7xl mx-auto px-6 py-12 relative z-10">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-          
-          {/* Brand / Status */}
-          <div className="text-center md:text-left">
-            <h2 className="text-2xl font-bold text-white tracking-tight mb-2">
-              <span className="text-blue-500">&lt;</span> 4R3 <span className="text-blue-500">/&gt;</span>
-            </h2>
-            <div className="flex items-center justify-center md:justify-start gap-2 text-xs font-mono text-gray-500">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-              <span>SYSTEM STATUS: OPERATIONAL</span>
+      <div className="max-w-6xl mx-auto px-6 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+          {/* Column 1: Brand & Status */}
+          <div className="md:col-span-5 space-y-4">
+            <div 
+              onClick={() => navigate("/")} 
+              className="cursor-pointer font-bold text-xl tracking-tight text-white flex items-center gap-1.5"
+            >
+              <span className="text-zinc-500 font-light">&lt;</span>
+              <span>4R3</span>
+              <span className="text-zinc-500 font-light">/&gt;</span>
+            </div>
+            <p className="text-xs text-zinc-500 max-w-sm leading-relaxed">
+              Full Stack Developer & Performance Engineer specializing in Next.js, React, Node.js, and Core Web Vitals optimization.
+            </p>
+          </div>
+
+          {/* Column 2: Navigation Links */}
+          <div className="md:col-span-4 space-y-3">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-zinc-200">Sitemap</h4>
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              {quickLinks.map((link) => (
+                <Link 
+                  key={link.name} 
+                  to={link.path} 
+                  className="hover:text-white transition-colors duration-200"
+                >
+                  {link.name}
+                </Link>
+              ))}
             </div>
           </div>
 
-          {/* Socials */}
-          <div className="flex gap-4">
-            {socialLinks.map((social, index) => (
-              <motion.a
-                key={index}
-                href={social.link}
-                target="_blank"
-                rel="noreferrer"
-                whileHover={{ y: -3, color: "#60A5FA" }}
-                className="p-3 bg-white/5 rounded-full border border-white/10 text-gray-400 transition-colors hover:border-blue-500/50 hover:bg-blue-900/10"
-              >
-                <social.icon size={18} />
-              </motion.a>
-            ))}
+          {/* Column 3: Socials */}
+          <div className="md:col-span-3 space-y-4 md:text-right flex flex-col md:items-end">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-zinc-200">Connect</h4>
+            <div className="flex gap-3">
+              {socialLinks.map((social, index) => (
+                <a
+                  key={index}
+                  href={social.link}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="p-2.5 bg-zinc-900 border border-white/5 rounded-full text-zinc-400 hover:text-white transition-colors hover:border-zinc-700 cursor-pointer"
+                >
+                  <social.icon size={16} />
+                </a>
+              ))}
+            </div>
           </div>
         </div>
 
         {/* Divider */}
-        <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-800 to-transparent my-8"></div>
+        <div className="w-full h-px bg-white/5 my-8"></div>
 
         {/* Bottom Bar */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm font-mono text-gray-500">
-          <p className="flex items-center gap-1">
-            © {new Date().getFullYear()} Engineered by Keshav Kumar.
-          </p>
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-[11px] font-mono text-zinc-500">
+          <p>© {new Date().getFullYear()} Keshav Kumar. All rights reserved.</p>
 
           <div className="flex items-center gap-6">
-            <p className="hidden md:block">v2.0.4</p>
-            
-            <motion.button
-              onClick={navigateAdminPage}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="flex items-center gap-2 px-3 py-1 rounded border border-white/5 bg-black/50 hover:border-red-500/50 hover:text-red-400 transition-colors group"
+            <p>v2.1.0</p>
+            <button
+              onClick={() => navigate("/admin")}
+              className="flex items-center gap-2 px-2.5 py-1 rounded border border-white/5 bg-zinc-900/50 hover:border-zinc-700 hover:text-zinc-300 transition-all cursor-pointer group"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-gray-600 group-hover:bg-red-500 transition-colors"></span>
-              <span>sudo login</span>
-            </motion.button>
+              <span className="w-1.5 h-1.5 rounded-full bg-zinc-600 group-hover:bg-zinc-400 transition-colors"></span>
+              <span>Admin Login</span>
+            </button>
           </div>
         </div>
       </div>
