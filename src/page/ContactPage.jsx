@@ -31,7 +31,10 @@ const ContactPage = () => {
   const onSubmit = async (data) => {
     setLoading(true);
     try {
+      console.log("link: ",apiLinks.mailToAdmin)
+      console.log(data)
       const res = await apiConnector("POST", apiLinks.mailToAdmin, data);
+      console.log("res of mail ",res)
       if (res?.success || res?.data?.success) { 
         toast.success("Message sent successfully!"); 
         reset(); 
@@ -39,6 +42,7 @@ const ContactPage = () => {
         toast.error(res?.message || 'Failed to send message.');
       }
     } catch (e) { 
+      console.log(e)
       toast.error('Failed to send message. Please try again.'); 
     } finally { 
       setLoading(false); 
